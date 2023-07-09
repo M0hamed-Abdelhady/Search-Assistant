@@ -106,7 +106,7 @@ def choose_site_for_each_element(words):
                 choose_str = input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> ")
                 choose = int(choose_str)
             elif choose == 3:
-                sys.exit()
+                sys.exit(interface())
             if choose < 1 or choose > 3:
                 raise ValueError(
                     "Error! Please input integer that exist in choices")
