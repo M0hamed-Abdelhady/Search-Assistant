@@ -36,13 +36,14 @@ def choose_site():
             print("Choose (integer) site to search?\n")
             for i in range(len(exist_sites)):
                 print(f"  [{i + 1}]{exist_sites[i]}")
-            print(f"**[{len(exist_sites) + 1}]Exit")
-            site = int(input("\t-> "))
+            print(f"**[{len(exist_sites) + 1}]Cancel")
+            site_str = input("\t-> ")
+            site = int(site_str)
             if site < 1 or site > len(exist_sites) + 1:
                 raise ValueError(
                     "Error! Please input integer that exist in choices")
             if site == len(exist_sites) + 1:
-                sys.exit()
+                sys.exit(interface())
             return site
         except ValueError as er:
             print(er)
@@ -56,7 +57,7 @@ def choose_site_for_each_element(words):
     print("Choose (integer) site to search?\n")
     for i in range(len(exist_sites)):
         print(f"  [{i + 1}]{exist_sites[i]}")
-    print(f"**[{len(exist_sites) + 1}]Exit")
+    print(f"**[{len(exist_sites) + 1}]Cancel\n")
     sites = []
     for i in range(len(words)):
         while True:
@@ -66,7 +67,7 @@ def choose_site_for_each_element(words):
                     raise ValueError(
                         "Error! Please input integer that exist in choices")
                 if site == len(exist_sites) + 1:
-                    sys.exit()
+                    sys.exit(interface())
                 sites.append(site)
                 break
             except ValueError as err:
@@ -76,12 +77,12 @@ def choose_site_for_each_element(words):
     while True:
         try:
             if for_edit:
-                choose = int(
-                    input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> "))
+                choose_str = input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> ")
+                choose = int(choose_str)
             if choose == 1:
                 for i in range(len(words)):
                     search(words[i], sites[i])
-                break
+                sys.exit(interface())
             elif choose == 2:
                 # -----------------------------`Edit`----------------------------------
                 for_edit = False
@@ -90,17 +91,20 @@ def choose_site_for_each_element(words):
                     "the j-th site\n*End editing by inputting 0 0")
                 while True:
                     try:
-                        i = int(input("i = "))
-                        j = int(input("j = "))
+                        i_str = input("i = ")
+                        j_str = input("j = ")
+                        i = int(i_str)
+                        j = int(j_str)
                         if j < 1 or j > len(exist_sites) or i < 1 or i > len(words):
                             raise ValueError(
                                 "Error! Please input integer that exist in choices")
                         sites[i - 1] = j
+                        print(f"\2{words[i - 1]} => {exist_sites[j - 1]}")
                         break
                     except ValueError as er:
                         print(er)
-                choose = int(
-                    input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> "))
+                choose_str = input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> ")
+                choose = int(choose_str)
             elif choose == 3:
                 sys.exit()
             if choose < 1 or choose > 3:
@@ -119,20 +123,89 @@ def choose_site_for_all_elements(words):
     while True:
         try:
             if for_edit:
-                choose = int(input(
+                choose_str = input(
                     f"You are close to search the previous list in {exist_sites[site - 1]}.\n"
-                    f"  [1]Confirm  [2]Edit  [3]Cancel\n\t-> "))
+                    f"  [1]Confirm  [2]Edit  [3]Cancel\n\t-> ")
+            choose = int(choose_str)
             if choose == 1:
                 for i in range(len(words)):
                     search(words[i], site)
-                break
+                sys.exit(interface())
             elif choose == 2:
                 for_edit = False
                 site = choose_site()
-                choose = int(
-                    input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> "))
+                choose_str = input("[1]Confirm  [2]Edit  [3]Cancel\n\t-> ")
+                choose = int(choose_str)
             elif choose == 3:
-                sys.exit()
+                sys.exit(interface())
+            if choose < 1 or choose > 3:
+                raise ValueError(
+                    "Error! Please input integer that exist in choices")
+        except ValueError as err:
+            print(err)
+
+
+def edit_list(words):
+    """
+    taking the user's list and enable him to edit it
+    """
+    while True:
+        try:
+            print("Your List is:")
+            for i in range(len(words)):
+                print(f"\t{i + 1}.{words[i]}")
+            choose_str = input(f"  [1]Confirm the List  [2]Add Queries  [3]Remove Queries  [4]Cancel\n\t-> ")
+            choose = int(choose_str)
+            if choose == 1:
+                return words
+            elif choose == 2:
+                print("Input Queries to Add to the list (input blank line to end inputting)")
+                while True:
+                    text = input()
+                    if text == '':
+                        break
+                    words.append(text)
+            elif choose == 3:
+                print("Input Query index to REMOVE from the list (input blank line to end inputting)")
+                print("*PLEASE NOTICE* THE ELEMENTS WILL BE REMOVED AFTER FINISH TAKING INPUT!")
+                print("  (mean that if your input was many 1's this will delete just the first element)")
+                knocked = []
+                while True:
+                    try:
+                        num = input()
+                        i = int(num)
+                        if i > len(words):
+                            print("No such index")
+                        else:
+                            knocked.append(i - 1)
+                    except ValueError:
+                        break
+                knocked = list(set(knocked))
+                knocked.reverse()
+                for i in knocked:
+                    del words[i]
+            elif choose == 4:
+                sys.exit(interface())
+            if choose < 1 or choose > 4:
+                raise ValueError("Error! Please input integer that exist in choices")
+        except ValueError as err:
+            print(err)
+
+
+def check_list(words):
+    """
+    ask the user if he wants to confirm the list of edit something
+    """
+    while True:
+        try:
+            choose_str = input(f"  [1]Confirm the List  [2]Edit  [3]Cancel\n\t-> ")
+            choose = int(choose_str)
+            if choose == 1:
+                return words
+            elif choose == 2:
+                return edit_list(words)
+            elif choose == 3:
+                sys.exit(interface())
             if choose < 1 or choose > 3:
                 raise ValueError(
                     "Error! Please input integer that exist in choices")
@@ -157,16 +230,18 @@ def assistant(text="", in_type=3, words=None):
         print("Your List is:")
         for i in range(len(words)):
             print(f"\t{i + 1}.{words[i]}")
+    words = check_list(words)
     while True:
         try:
-            choose = int(input(
-                "[1]Select All\n[2]Select one by one\n[3]Exit\n\t-> "))
+            choose_str = input(
+                "[1]Select All\n[2]Select one by one\n[3]Cancel\n\t-> ")
+            choose = int(choose_str)
             if choose == 1:
                 choose_site_for_all_elements(words)
             elif choose == 2:
                 choose_site_for_each_element(words)
             elif choose == 3:
-                sys.exit()
+                sys.exit(interface())
             else:
                 raise ValueError(
                     "Error! Please input integer that exist in choices")
@@ -178,9 +253,9 @@ def assistant(text="", in_type=3, words=None):
 def interface():
     lst = []
     while True:
-        in_type = int(
-            input("[1]Input text and extract quoted\n[2]Input just text to search\n[3]Input list\n[4]Exit\n\t-> "))
+        in_str = input("[1]Input text and extract quoted\n[2]Input just text to search\n[3]Input list\n[4]Exit\n\t-> ")
         try:
+            in_type = int(in_str)
             if in_type == 1:
                 text = input("Input text and extract quoted to search: ")
                 assistant(text, in_type)
