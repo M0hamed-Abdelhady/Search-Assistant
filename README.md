@@ -25,7 +25,7 @@ The application is structured around several functions, each with specific funct
 
 ## How to Use
 - **First Way**
-   - Download Search Assistant.exe
+   - Download and Run Search Assistant.exe
 
 - **Second Way**
    - Clone this repository or download the script.
